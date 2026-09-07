@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(ocdw)kej)^)(d1)*9ig!+$qj989^&j084uim3wo881%+)0&c*'
+# Reads from the SECRET_KEY environment variable (set on Heroku with
+# `heroku config:set SECRET_KEY=...`). The fallback below is ONLY used
+# when the env var isn't set (e.g. running locally without a .env) and
+# is a fresh key that has never been committed to git.
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    '7%9=z(2tl9oltm&r=&fy&$u&cb+s(g)3-cxn0)p1zhrp#w#y_l',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
