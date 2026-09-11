@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cook Book{% endblock %}</title>
+    <meta name="description" content="{% block description %}Organise meals for someone who needs them, one date at a time.{% endblock %}">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+        <div class="container">
+            <nav class="main-nav" aria-label="Main navigation">
+                <a href="{% url 'rota:home' %}" class="brand">Cook Book</a>
+                <div class="nav-links">
+                    <a href="{% url 'rota:home' %}">Home</a>
+                    {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+                    {% if user.is_authenticated %}<span class="nav-user">{{ user.username }}</span>{% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    {% if messages %}
+        <div class="container">
+            <ul class="messages" role="status">
+                {% for message in messages %}
+                    <li class="message message--{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <main class="container page-content" id="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; {% now "Y" %} Cook Book &mdash; a community cooking rota.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

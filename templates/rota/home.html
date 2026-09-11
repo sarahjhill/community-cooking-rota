@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Home &mdash; Cook Book{% endblock %}
+
+{% block content %}
+    <h1>Meals, organised.</h1>
+    <p class="lead">
+        Someone needs feeding for a while. One organiser sets up the dates,
+        and the people who want to help claim the ones they can cook.
+    </p>
+
+    <div class="card">
+        <h2>Rotas running now</h2>
+        {% if rotas %}
+            <ul class="rota-list">
+                {% for rota in rotas %}
+                    <li>
+                        <strong>{{ rota.recipient_name }}</strong>
+                        &mdash; {{ rota.start_date }} to {{ rota.end_date }}
+                        <span class="muted">({{ rota.slots.count }} date{{ rota.slots.count|pluralize }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">No rotas yet. Add one in the admin to see it appear here.</p>
+        {% endif %}
+
+        <a class="btn" href="{% url 'admin:index' %}">Open the admin</a>
+    </div>
+{% endblock %}
