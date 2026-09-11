@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Cook Book{% endblock %}</title>
+    <title>{% block title %}Community Cooking Rota{% endblock %}</title>
     <meta name="description" content="{% block description %}Organise meals for someone who needs them, one date at a time.{% endblock %}">
 
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
@@ -16,7 +16,7 @@
     <header class="site-header">
         <div class="container">
             <nav class="main-nav" aria-label="Main navigation">
-                <a href="{% url 'rota:home' %}" class="brand">Cook Book</a>
+                <a href="{% url 'rota:home' %}" class="brand">Community Cooking Rota</a>
                 <div class="nav-links">
                     <a href="{% url 'rota:home' %}">Home</a>
                     {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
@@ -42,7 +42,7 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; {% now "Y" %} Cook Book &mdash; a community cooking rota.</p>
+            <p>&copy; {% now "Y" %} Community Cooking Rota &mdash; meals organised by the people who turn up.</p>
         </div>
     </footer>
 

@@ -1,4 +1,4 @@
-"""URL configuration for the Cook Book project."""
+"""URL configuration for the Community Cooking Rota project."""
 from django.contrib import admin
 from django.urls import include, path
 
