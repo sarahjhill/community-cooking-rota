@@ -35,6 +35,9 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 
+# Without this, every form submission on the live site fails CSRF checks.
+CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
+
 
 # Application definition
 
@@ -89,6 +92,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Heroku provides DATABASE_URL. When it's set (production only) it replaces
+# the SQLite config above. Locally the variable doesn't exist, so nothing
+# here runs and you carry on with db.sqlite3.
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+
+    DATABASES['default'] = dj_database_url.parse(
+        os.environ['DATABASE_URL'],
+        conn_max_age=600,
+        ssl_require=True,
+    )
 
 
 # Password validation
