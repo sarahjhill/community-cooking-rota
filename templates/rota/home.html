@@ -9,24 +9,43 @@
         and the people who want to help claim the ones they can cook.
     </p>
 
-    <div class="card">
-    <h2>Rotas running now</h2>
-    {% if rotas %}
-        <ul class="rota-list">
-            {% for rota in rotas %}
-                <li>
-                    <a href="{% url 'rota:rota_detail' rota.pk %}"><strong>{{ rota.recipient_name }}</strong></a>
-                    &mdash; {{ rota.start_date }} to {{ rota.end_date }}
-                    <span class="muted">({{ rota.slots.count }} date{{ rota.slots.count|pluralize }})</span>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="muted">No rotas yet.</p>
-    {% endif %}
+    <div class="card home-card">
+        <div class="home-card__body">
+            <h2>Rotas running now</h2>
+            {% if rotas %}
+                <ul class="rota-list">
+                    {% for rota in rotas %}
+                        <li>
+                            <a href="{% url 'rota:rota_detail' rota.pk %}"><strong>{{ rota.recipient_name }}</strong></a>
+                            &mdash; {{ rota.start_date }} to {{ rota.end_date }}
+                            <span class="muted">({{ rota.slots.count }} date{{ rota.slots.count|pluralize }})</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted">No rotas yet.</p>
+            {% endif %}
 
-    {% if user.is_authenticated and user.profile.role == "organiser" %}
-        <a class="btn" href="{% url 'rota:rota_create' %}">New rota</a>
-    {% endif %}
+            {% if user.is_authenticated and user.profile.role == "organiser" %}
+                <a class="btn" href="{% url 'rota:rota_create' %}">New rota</a>
+            {% endif %}
+        </div>
+
+        <div class="cook-scene" aria-hidden="true">
+            <div class="stove">
+                <div class="pot">
+                    <div class="pot-handle pot-handle--left"></div>
+                    <div class="pot-handle pot-handle--right"></div>
+                    <span class="steam steam--1"></span>
+                    <span class="steam steam--2"></span>
+                    <span class="steam steam--3"></span>
+                </div>
+                <span class="flame flame--1">&#128293;</span>
+                <span class="flame flame--2">&#128293;</span>
+                <span class="flame flame--3">&#128293;</span>
+                <div class="hob"></div>
+            </div>
+            <p class="muted" id="cook-caption">Sunday roast, simmering away&hellip;</p>
+        </div>
     </div>
 {% endblock %}
