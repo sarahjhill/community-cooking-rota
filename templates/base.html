@@ -29,8 +29,7 @@
             >Admin</a
           >{% endif %}
           <span class="nav-user">
-            {{ user.username }}{% if user.profile %} ({{
-            user.profile.get_role_display }}){% endif %}
+          {{ user.username }}{% if user.profile %} ({{ user.profile.get_role_display }}){% endif %}
           </span>
 
           <form method="post" action="{% url 'logout' %}" class="logout-form">
