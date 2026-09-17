@@ -195,3 +195,68 @@ body {
         align-items: flex-start;
     }
 }
+
+/* ---- Forms ---- */
+.form-card {
+    max-width: 30rem;
+}
+
+.form-card label {
+    display: block;
+    font-weight: 600;
+    margin-top: 0.75rem;
+}
+
+.form-card input[type="text"],
+.form-card input[type="email"],
+.form-card input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-card ul {
+    color: var(--muted);
+    font-size: 0.88rem;
+    padding-left: 1.1rem;
+}
+
+.form-card .helptext {
+    display: block;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.form-error {
+    background: #FBE8E8;
+    border-left: 4px solid #B02F2F;
+    padding: 0.7rem 1rem;
+    border-radius: 4px;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.92rem;
+}
+
+/* A submit button that has to sit inline with nav links */
+.logout-form {
+    display: inline;
+}
+
+.linklike {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.linklike:hover {
+    color: var(--primary);
+}

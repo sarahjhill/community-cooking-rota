@@ -159,3 +159,9 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Where to send people after logging in, after logging out, and where to
+# send them if they hit a page that needs a login.
+LOGIN_REDIRECT_URL = "rota:home"
+LOGOUT_REDIRECT_URL = "rota:home"
+LOGIN_URL = "login"

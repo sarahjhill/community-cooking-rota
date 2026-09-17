@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Sign up &mdash; Community Cooking Rota{% endblock %}
+
+{% block content %}
+  <h1>Create an account</h1>
+  <p class="lead">
+    Organisers set up a rota and its dates. Cooks claim the dates they can cover.
+  </p>
+
+  <div class="card form-card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn" type="submit">Sign up</button>
+    </form>
+
+    <p class="muted">
+      Already have an account? <a href="{% url 'login' %}">Log in</a>.
+    </p>
+  </div>
+{% endblock %}

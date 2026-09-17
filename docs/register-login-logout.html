@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register, Log In and Log Out — Community Cooking Rota</title>
+<style>
+  :root{
+    --ink:#0A0A0C; --paper:#F6F3ED; --surface:#FFFDF9;
+    --flame:#C2260E; --flame-bright:#FF3B1F; --amber:#8A5D00;
+    --text:#1f2933; --muted:#56534D; --border:#DCD7CC;
+    --ok:#1E7A5A; --warn:#8A5D00; --danger:#B02F2F;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--text);
+    font-family:var(--sans); line-height:1.65; font-size:16px;
+  }
+  .sheet{max-width:860px; margin:0 auto; padding:0 24px 80px;}
+
+  /* ---------- letterhead ---------- */
+  header.head{
+    border-bottom:3px solid var(--flame); padding:34px 0 18px; margin-bottom:34px;
+  }
+  .brandline{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; flex-wrap:wrap; font-size:.82rem; color:var(--muted);
+    letter-spacing:.04em; text-transform:uppercase;
+  }
+  .brandline b{color:var(--ink)}
+  h1{
+    font-size:2.1rem; line-height:1.15; letter-spacing:-.025em;
+    margin:.5em 0 .25em; color:var(--ink); font-weight:800;
+  }
+  .sub{font-size:1.08rem; color:var(--muted); margin:0 0 4px; max-width:62ch;}
+
+  /* ---------- structure ---------- */
+  h2{
+    font-size:1.35rem; letter-spacing:-.02em; color:var(--ink); font-weight:800;
+    margin:52px 0 6px; padding-top:20px; border-top:1px solid var(--border);
+  }
+  h2:first-of-type{border-top:0; padding-top:0; margin-top:34px;}
+  h2 .num{
+    display:inline-block; min-width:1.9em; color:var(--flame);
+    font-variant-numeric:tabular-nums;
+  }
+  h3{font-size:1.02rem; margin:26px 0 4px; color:var(--ink); font-weight:700;}
+  p{margin:.7em 0; max-width:70ch;}
+  .why{
+    border-left:3px solid var(--amber); background:#FFF8EA;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .why b{color:var(--amber)}
+  .warn{
+    border-left:3px solid var(--danger); background:#FCEEEE;
+    padding:10px 16px; margin:14px 0; font-size:.95rem; max-width:70ch;
+  }
+  .warn b{color:var(--danger)}
+  .file{
+    font-family:var(--mono); font-size:.82rem; background:var(--ink); color:#F6F3ED;
+    display:inline-block; padding:3px 10px; border-radius:3px 3px 0 0; margin-top:18px;
+  }
+  pre{
+    background:var(--ink); color:#EDEAE3; padding:16px 18px; margin:0 0 4px;
+    overflow-x:auto; border-radius:0 3px 3px 3px; font-size:.83rem; line-height:1.55;
+  }
+  .file + pre{border-top-left-radius:0}
+  code{font-family:var(--mono); font-size:.88em;}
+  p code, li code, td code{
+    background:#EFEBE2; padding:1px 5px; border-radius:3px; color:var(--flame);
+  }
+  pre code{background:none; padding:0; color:inherit;}
+  .term{background:#141419;}
+  ul,ol{max-width:70ch; padding-left:1.3em;}
+  li{margin:.35em 0;}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:.92rem;}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--surface); font-weight:700; color:var(--ink);}
+  .check{list-style:none; padding-left:0;}
+  .check li{padding-left:30px; position:relative;}
+  .check li::before{
+    content:""; position:absolute; left:0; top:.42em; width:15px; height:15px;
+    border:2px solid var(--border); border-radius:3px; background:#fff;
+  }
+  footer{
+    margin-top:60px; padding-top:16px; border-top:1px solid var(--border);
+    font-size:.82rem; color:var(--muted);
+  }
+  @media print{
+    body{background:#fff; font-size:11.5pt;}
+    .sheet{max-width:none; padding:0;}
+    h2{page-break-after:avoid;} pre{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="head">
+  <div class="brandline">
+    <span><b>Community Cooking Rota</b> · Build phase</span>
+    <span>Sarah J Hill</span>
+  </div>
+  <h1>Register, log in and log out<br>— with a role chosen at signup</h1>
+  <p class="sub">Every step, in order, for macOS. Written for someone who has not built
+  Django authentication before. Nothing is assumed except that your site already runs.</p>
+</header>
+
+<h2><span class="num">00</span>What you are building</h2>
+
+<p>By the end of this you will have four working things:</p>
+
+<ul>
+  <li>A <b>signup page</b> where someone picks <b>Organiser</b> or <b>Cook</b> as they register</li>
+  <li>A <b>login page</b></li>
+  <li>A <b>logout button</b></li>
+  <li>Nav links that change depending on whether someone is signed in</li>
+</ul>
+
+<div class="why">
+  <b>Why you are not installing anything.</b> Django ships with a complete
+  authentication system — users, password hashing, login, logout, sessions. You are
+  not building auth. You are wiring up what is already there and adding one extra
+  field. Your <code>Profile</code> model with its <code>ROLE_CHOICES</code> already
+  exists, so the role has somewhere to live.
+</div>
+
+<h3>Check you are ready</h3>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>cd ~/Documents/vscode-projects/cook_book
+source .venv/bin/activate
+DEBUG=True python manage.py runserver</code></pre>
+
+<p>If <b>http://127.0.0.1:8000/</b> loads with the cream background and rust headings,
+you are ready. Press <code>Control</code> + <code>C</code> to stop the server whenever
+you need the Terminal back.</p>
+
+<div class="why">
+  <b>The <code>(.venv)</code> matters.</b> Every command in this guide assumes your
+  prompt starts with <code>(.venv)</code>. If it doesn't, run
+  <code>source .venv/bin/activate</code> again. Without it you are using the wrong
+  Python and nothing will work.
+</div>
+
+<h2><span class="num">01</span>Turn on Django's built-in auth pages</h2>
+
+<p>Django already contains the login and logout views. You just have to give them a URL.</p>
+
+<span class="file">config/urls.py</span>
+<pre><code>from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("", include("rota.urls")),
+]</code></pre>
+
+<p>That single <code>accounts/</code> line gives you all of these at once:</p>
+
+<table>
+  <tr><th>URL</th><th>What it does</th><th>Name to use in templates</th></tr>
+  <tr><td><code>/accounts/login/</code></td><td>The login page</td><td><code>login</code></td></tr>
+  <tr><td><code>/accounts/logout/</code></td><td>Logs the user out</td><td><code>logout</code></td></tr>
+  <tr><td><code>/accounts/password_change/</code></td><td>Change password</td><td><code>password_change</code></td></tr>
+</table>
+
+<div class="why">
+  <b>Order matters in that list.</b> <code>path("", include("rota.urls"))</code> must
+  stay <b>last</b>. Django checks patterns top to bottom and stops at the first match.
+  An empty pattern near the top would swallow everything below it.
+</div>
+
+<h2><span class="num">02</span>Tell Django where to send people</h2>
+
+<p>Add these three lines to the bottom of your settings file, just above
+<code>DEFAULT_AUTO_FIELD</code>.</p>
+
+<span class="file">config/settings.py</span>
+<pre><code># Where to send people after logging in, after logging out, and where to
+# send them if they hit a page that needs a login.
+LOGIN_REDIRECT_URL = "rota:home"
+LOGOUT_REDIRECT_URL = "rota:home"
+LOGIN_URL = "login"</code></pre>
+
+<div class="why">
+  <b>Why <code>rota:home</code> and not <code>/</code>.</b> That is the URL's
+  <i>name</i>, from <code>app_name = "rota"</code> in your <code>rota/urls.py</code>.
+  Using names means if you ever change the actual address, every link and redirect
+  follows automatically. Hardcoded slashes rot.
+</div>
+
+<h2><span class="num">03</span>Build the signup form</h2>
+
+<p>This file does not exist yet. In VS Code, right-click the <code>rota</code> folder →
+<b>New File</b> → name it <code>forms.py</code>.</p>
+
+<span class="file">rota/forms.py</span>
+<pre><code>from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+from .models import Profile
+
+
+class SignUpForm(UserCreationForm):
+    """Django's normal signup form, plus the Organiser/Cook choice."""
+
+    email = forms.EmailField(
+        required=True,
+        help_text="We use this to send you rota updates.",
+    )
+    role = forms.ChoiceField(
+        choices=Profile.ROLE_CHOICES,
+        widget=forms.RadioSelect,
+        label="I am signing up as",
+    )
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+
+    # Show the fields in a sensible order rather than Django's default.
+    field_order = ["username", "email", "role", "password1", "password2"]</code></pre>
+
+<div class="why">
+  <b>What <code>UserCreationForm</code> already handles for you:</b> checking the two
+  passwords match, rejecting passwords that are too short or too common, refusing a
+  username that is taken, and hashing the password so it is never stored readable.
+  You are inheriting all of that and adding one field.
+</div>
+
+<div class="why">
+  <b>Why <code>role</code> is not in <code>Meta.fields</code>.</b> That list is for
+  fields that belong to the <code>User</code> model. <code>role</code> belongs to
+  <code>Profile</code>, so you declare it on the form by hand and save it yourself in
+  the next step.
+</div>
+
+<h2><span class="num">04</span>Write the signup view</h2>
+
+<p>Replace the whole contents of <code>rota/views.py</code> with this.</p>
+
+<span class="file">rota/views.py</span>
+<pre><code>from django.contrib import messages
+from django.contrib.auth import login
+from django.shortcuts import redirect, render
+
+from .forms import SignUpForm
+from .models import Profile, Rota
+
+
+def home(request):
+    """Landing page: every rota, newest start date first."""
+    return render(request, "rota/home.html", {"rotas": Rota.objects.all()})
+
+
+def signup(request):
+    """Create a User, attach a Profile with their chosen role, sign them in."""
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Profile.objects.create(user=user, role=form.cleaned_data["role"])
+            login(request, user)
+            messages.success(
+                request,
+                f"Welcome, {user.username}. Your account is ready.",
+            )
+            return redirect("rota:home")
+    else:
+        form = SignUpForm()
+
+    return render(request, "registration/signup.html", {"form": form})</code></pre>
+
+<div class="why">
+  <b>Read the shape of that view.</b> It is the standard Django form pattern and you
+  will write it again for every create and edit page in this project:
+  <br>— <b>POST</b> means the form was submitted, so validate it.
+  <br>— <b>Valid</b> means save, then <b>redirect</b>.
+  <br>— <b>Anything else</b> (a first visit, or a form with errors) means render the page.
+</div>
+
+<div class="why">
+  <b>Why redirect instead of render after saving.</b> If you render, the browser's
+  address bar still says "this was a POST", so refreshing submits the form a second
+  time and creates a duplicate. Redirecting makes refresh harmless. This is called
+  Post/Redirect/Get, and it is a rule, not a preference.
+</div>
+
+<h2><span class="num">05</span>Add the signup URL</h2>
+
+<span class="file">rota/urls.py</span>
+<pre><code>from django.urls import path
+
+from . import views
+
+app_name = "rota"
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("signup/", views.signup, name="signup"),
+]</code></pre>
+
+<h2><span class="num">06</span>Create the two templates</h2>
+
+<p>Django looks for login and signup templates in a folder called
+<code>registration</code>. The name is not optional.</p>
+
+<p>In VS Code: right-click <code>templates</code> → <b>New Folder</b> →
+<code>registration</code>. Then create the two files below inside it.</p>
+
+<span class="file">templates/registration/login.html</span>
+<pre><code>{% extends "base.html" %}
+
+{% block title %}Log in &amp;mdash; Community Cooking Rota{% endblock %}
+
+{% block content %}
+  &lt;h1&gt;Log in&lt;/h1&gt;
+
+  &lt;div class="card form-card"&gt;
+    {% if form.errors %}
+      &lt;p class="form-error"&gt;That username and password don't match. Please try again.&lt;/p&gt;
+    {% endif %}
+
+    &lt;form method="post"&gt;
+      {% csrf_token %}
+      {{ form.as_p }}
+      &lt;button class="btn" type="submit"&gt;Log in&lt;/button&gt;
+    &lt;/form&gt;
+
+    &lt;p class="muted"&gt;
+      No account yet? &lt;a href="{% url 'rota:signup' %}"&gt;Create one&lt;/a&gt;.
+    &lt;/p&gt;
+  &lt;/div&gt;
+{% endblock %}</code></pre>
+
+<span class="file">templates/registration/signup.html</span>
+<pre><code>{% extends "base.html" %}
+
+{% block title %}Sign up &amp;mdash; Community Cooking Rota{% endblock %}
+
+{% block content %}
+  &lt;h1&gt;Create an account&lt;/h1&gt;
+  &lt;p class="lead"&gt;
+    Organisers set up a rota and its dates. Cooks claim the dates they can cover.
+  &lt;/p&gt;
+
+  &lt;div class="card form-card"&gt;
+    &lt;form method="post"&gt;
+      {% csrf_token %}
+      {{ form.as_p }}
+      &lt;button class="btn" type="submit"&gt;Sign up&lt;/button&gt;
+    &lt;/form&gt;
+
+    &lt;p class="muted"&gt;
+      Already have an account? &lt;a href="{% url 'login' %}"&gt;Log in&lt;/a&gt;.
+    &lt;/p&gt;
+  &lt;/div&gt;
+{% endblock %}</code></pre>
+
+<div class="warn">
+  <b>Never leave out <code>{% csrf_token %}</code>.</b> Without it Django rejects the
+  form with a 403 Forbidden. It is a hidden field that proves the form came from your
+  own site and not from an attacker's page. Every single <code>&lt;form method="post"&gt;</code>
+  you ever write needs it.
+</div>
+
+<h2><span class="num">07</span>Put the links in your nav</h2>
+
+<p>In <code>templates/base.html</code>, find the <code>&lt;div class="nav-links"&gt;</code>
+block and replace everything between its opening and closing tags with this.</p>
+
+<span class="file">templates/base.html</span>
+<pre><code>&lt;a href="{% url 'rota:home' %}"&gt;Home&lt;/a&gt;
+
+{% if user.is_authenticated %}
+  {% if user.is_staff %}&lt;a href="{% url 'admin:index' %}"&gt;Admin&lt;/a&gt;{% endif %}
+  &lt;span class="nav-user"&gt;{{ user.username }}&lt;/span&gt;
+
+  &lt;form method="post" action="{% url 'logout' %}" class="logout-form"&gt;
+    {% csrf_token %}
+    &lt;button type="submit" class="linklike"&gt;Log out&lt;/button&gt;
+  &lt;/form&gt;
+{% else %}
+  &lt;a href="{% url 'login' %}"&gt;Log in&lt;/a&gt;
+  &lt;a class="btn btn-small" href="{% url 'rota:signup' %}"&gt;Sign up&lt;/a&gt;
+{% endif %}</code></pre>
+
+<div class="warn">
+  <b>The single biggest trap in this whole guide.</b> Since Django 5.0, logging out
+  <b>must be a POST</b>. Nearly every tutorial online still shows
+  <code>&lt;a href="{% url 'logout' %}"&gt;Log out&lt;/a&gt;</code> — that is why it is a
+  form with a button above. A plain link will give you <b>405 Method Not Allowed</b>.
+  You are on Django 5.2, so use the form.
+</div>
+
+<div class="why">
+  <b><code>user</code> is always available in your templates.</b> You never pass it in.
+  That comes from <code>django.contrib.auth.context_processors.auth</code>, already in
+  your settings. When nobody is logged in, <code>user.is_authenticated</code> is simply
+  <code>False</code>.
+</div>
+
+<h2><span class="num">08</span>Style the form (small CSS addition)</h2>
+
+<p>Add this to the very bottom of <code>static/css/styles.css</code>.</p>
+
+<span class="file">static/css/styles.css</span>
+<pre><code>/* ---- Forms ---- */
+.form-card {
+    max-width: 30rem;
+}
+
+.form-card label {
+    display: block;
+    font-weight: 600;
+    margin-top: 0.75rem;
+}
+
+.form-card input[type="text"],
+.form-card input[type="email"],
+.form-card input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-card ul {
+    color: var(--muted);
+    font-size: 0.88rem;
+    padding-left: 1.1rem;
+}
+
+.form-card .helptext {
+    display: block;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.form-error {
+    background: #FBE8E8;
+    border-left: 4px solid #B02F2F;
+    padding: 0.7rem 1rem;
+    border-radius: 4px;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.92rem;
+}
+
+/* A submit button that has to sit inline with nav links */
+.logout-form {
+    display: inline;
+}
+
+.linklike {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.linklike:hover {
+    color: var(--primary);
+}</code></pre>
+
+<h2><span class="num">09</span>Try it</h2>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>DEBUG=True python manage.py runserver</code></pre>
+
+<p>Work through these in the browser and tick them off:</p>
+
+<ul class="check">
+  <li>Nav shows <b>Log in</b> and <b>Sign up</b> when you are signed out</li>
+  <li><b>/signup/</b> shows username, email, two radio buttons, two password boxes</li>
+  <li>Two different passwords gives a clear error and does <b>not</b> create the account</li>
+  <li>A password like <code>password</code> is rejected as too common</li>
+  <li>A good signup lands you on the home page, signed in, with a green success message</li>
+  <li>Nav now shows your username and <b>Log out</b></li>
+  <li><b>Log out</b> returns you to the home page, signed out</li>
+  <li>Logging back in works with the account you just made</li>
+</ul>
+
+<h3>Confirm the role actually saved</h3>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>DEBUG=True python manage.py shell</code></pre>
+
+<pre><code>from rota.models import Profile
+Profile.objects.all()
+exit()</code></pre>
+
+<p>You should see something like
+<code>&lt;Profile: sarah (Cook)&gt;</code>. If the list is empty, the user was created but
+the Profile was not — check step 04 saved it.</p>
+
+<h2><span class="num">10</span>Write the automated tests</h2>
+
+<p>Your README promises tests, and the assessment marks them. Replace
+<code>rota/tests.py</code> with this.</p>
+
+<span class="file">rota/tests.py</span>
+<pre><code>from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
+
+from .models import Profile
+
+
+class SignUpTests(TestCase):
+    """Registering creates a User, a Profile with the chosen role, and signs them in."""
+
+    def test_signup_page_loads(self):
+        response = self.client.get(reverse("rota:signup"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "registration/signup.html")
+
+    def test_signup_creates_user_and_profile(self):
+        response = self.client.post(reverse("rota:signup"), {
+            "username": "newcook",
+            "email": "cook@example.com",
+            "role": "cook",
+            "password1": "Sturdy-Passphrase-42",
+            "password2": "Sturdy-Passphrase-42",
+        })
+
+        self.assertRedirects(response, reverse("rota:home"))
+
+        user = User.objects.get(username="newcook")
+        self.assertEqual(user.profile.role, "cook")
+
+    def test_mismatched_passwords_create_nothing(self):
+        self.client.post(reverse("rota:signup"), {
+            "username": "nope",
+            "email": "nope@example.com",
+            "role": "organiser",
+            "password1": "Sturdy-Passphrase-42",
+            "password2": "Different-Passphrase-43",
+        })
+
+        self.assertFalse(User.objects.filter(username="nope").exists())
+        self.assertEqual(Profile.objects.count(), 0)
+
+
+class LoginLogoutTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="organiser1",
+            password="Sturdy-Passphrase-42",
+        )
+        Profile.objects.create(user=self.user, role="organiser")
+
+    def test_login_works(self):
+        logged_in = self.client.login(
+            username="organiser1",
+            password="Sturdy-Passphrase-42",
+        )
+        self.assertTrue(logged_in)
+
+    def test_logout_requires_post(self):
+        """Django 5 refuses a GET to the logout view."""
+        self.client.login(username="organiser1", password="Sturdy-Passphrase-42")
+
+        self.assertEqual(self.client.get(reverse("logout")).status_code, 405)
+        self.assertEqual(self.client.post(reverse("logout")).status_code, 302)</code></pre>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>DEBUG=True python manage.py test</code></pre>
+
+<p>You want <code>Ran 6 tests</code> and <code>OK</code>. Tests run against a
+temporary database that is thrown away afterwards, so nothing you have in the admin
+is touched.</p>
+
+<h2><span class="num">11</span>Commit and deploy</h2>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>python manage.py collectstatic --noinput
+git add -A
+git commit -m "Add registration, login and logout with role choice at signup"
+git push
+git push heroku main --force</code></pre>
+
+<p>Then check the live site, make an account there too, and confirm the role saved:</p>
+
+<span class="file">Terminal</span>
+<pre class="term"><code>heroku open
+heroku run python manage.py shell</code></pre>
+
+<h2><span class="num">12</span>When something goes wrong</h2>
+
+<table>
+  <tr><th>What you see</th><th>What it means</th><th>Fix</th></tr>
+
+  <tr>
+    <td><code>405 Method Not Allowed</code> on logout</td>
+    <td>Logout was a link, not a form</td>
+    <td>Step 07 — it must be <code>&lt;form method="post"&gt;</code></td>
+  </tr>
+  <tr>
+    <td><code>403 Forbidden</code> / CSRF verification failed</td>
+    <td>A form is missing its token</td>
+    <td>Add <code>{% csrf_token %}</code> inside every POST form</td>
+  </tr>
+  <tr>
+    <td><code>NoReverseMatch: 'signup'</code></td>
+    <td>Wrong name in a <code>{% url %}</code> tag</td>
+    <td>Your own app's URLs need the prefix: <code>rota:signup</code>. Django's built-in
+        ones don't: <code>login</code>, <code>logout</code></td>
+  </tr>
+  <tr>
+    <td><code>TemplateDoesNotExist: registration/login.html</code></td>
+    <td>Folder misspelled or in the wrong place</td>
+    <td>It must be exactly <code>templates/registration/login.html</code></td>
+  </tr>
+  <tr>
+    <td><code>RelatedObjectDoesNotExist: User has no profile</code></td>
+    <td>A user exists without a Profile — usually your superuser, created before
+        this code existed</td>
+    <td>Admin → Profiles → Add, pick that user, give them a role</td>
+  </tr>
+  <tr>
+    <td>Page loads with no styling</td>
+    <td><code>DEBUG</code> is off, so Django won't serve static files</td>
+    <td>Run with <code>DEBUG=True</code> in front of the command</td>
+  </tr>
+  <tr>
+    <td><code>command not found: python</code></td>
+    <td>The virtual environment isn't active</td>
+    <td><code>source .venv/bin/activate</code> — look for <code>(.venv)</code></td>
+  </tr>
+</table>
+
+<h2><span class="num">13</span>What this unlocks</h2>
+
+<p>With login working you can now use <code>@login_required</code> above any view, and
+<code>request.user</code> inside one. That is what the next pieces need:</p>
+
+<ul>
+  <li><b>Rota CRUD</b> — <code>organiser=request.user</code> when creating a rota</li>
+  <li><b>Slot claiming</b> — <code>slot.cook = request.user</code></li>
+  <li><b>Access control</b> — comparing <code>request.user</code> to
+      <code>rota.organiser</code> before allowing an edit</li>
+</ul>
+
+<p>None of that is buildable until this step works, which is why it comes first.</p>
+
+<footer>
+  <b>Sarah J Hill</b> — Dragon Fire Design<br>
+  sarahjhill.com · sarah@sarahjhill.com<br>
+  Community Cooking Rota · Code Institute Full-Stack Capstone
+</footer>
+
+</div>
+</body>
+</html>
