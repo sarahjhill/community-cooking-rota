@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ rota.recipient_name }} &mdash; Community Cooking Rota{% endblock %}
+
+{% block content %}
+  <h1>{{ rota.recipient_name }}</h1>
+  <p class="muted">
+    {{ rota.start_date }} to {{ rota.end_date }}
+    {% if rota.occasion %}&middot; {{ rota.occasion }}{% endif %}
+  </p>
+
+  <div class="card">
+    {% if rota.dietary_notes %}
+      <p><strong>Dietary notes:</strong> {{ rota.dietary_notes }}</p>
+    {% endif %}
+    {% if rota.address %}
+      <p><strong>Address:</strong> {{ rota.address }}</p>
+    {% endif %}
+
+    <h2>Dates</h2>
+    {% if rota.slots.all %}
+      <ul class="rota-list">
+        {% for slot in rota.slots.all %}
+          <li>
+            {{ slot.date }} &mdash;
+            {% if slot.cook %}{{ slot.cook.username }}{% else %}<span class="muted">unclaimed</span>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No dates added yet.</p>
+    {% endif %}
+
+    {% if user == rota.organiser %}
+      <a class="btn" href="{% url 'rota:rota_update' rota.pk %}">Edit</a>
+      <a class="btn btn-small" href="{% url 'rota:rota_delete' rota.pk %}">Delete</a>
+    {% endif %}
+  </div>
+{% endblock %}
