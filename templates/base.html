@@ -1,60 +1,73 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Community Cooking Rota{% endblock %}</title>
-    <meta name="description" content="{% block description %}Organise meals for someone who needs them, one date at a time.{% endblock %}">
+    <meta
+      name="description"
+      content="{% block description %}Organise meals for someone who needs them, one date at a time.{% endblock %}"
+    />
 
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     {% block extra_css %}{% endblock %}
-</head>
-<body>
+  </head>
+  <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header">
-        <div class="container">
-            <nav class="main-nav" aria-label="Main navigation">
-                <a href="{% url 'rota:home' %}" class="brand">Community Cooking Rota</a>
-                <a href="{% url 'rota:home' %}">Home</a>
+      <div class="container">
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="{% url 'rota:home' %}" class="brand"
+            >Community Cooking Rota</a
+          >
+          <a href="{% url 'rota:home' %}">Home</a>
 
-{% if user.is_authenticated %}
-  {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
-  <span class="nav-user">{{ user.username }}</span>
+          {% if user.is_authenticated %} {% if user.is_staff %}<a
+            href="{% url 'admin:index' %}"
+            >Admin</a
+          >{% endif %}
+          <span class="nav-user">
+            {{ user.username }}{% if user.profile %} ({{
+            user.profile.get_role_display }}){% endif %}
+          </span>
 
-  <form method="post" action="{% url 'logout' %}" class="logout-form">
-    {% csrf_token %}
-    <button type="submit" class="linklike">Log out</button>
-  </form>
-{% else %}
-  <a href="{% url 'login' %}">Log in</a>
-  <a class="btn btn-small" href="{% url 'rota:signup' %}">Sign up</a>
-{% endif %}
-            </nav>
-        </div>
+          <form method="post" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="linklike">Log out</button>
+          </form>
+          {% else %}
+          <a href="{% url 'login' %}">Log in</a>
+          <a class="btn btn-small" href="{% url 'rota:signup' %}">Sign up</a>
+          {% endif %}
+        </nav>
+      </div>
     </header>
 
     {% if messages %}
-        <div class="container">
-            <ul class="messages" role="status">
-                {% for message in messages %}
-                    <li class="message message--{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+    <div class="container">
+      <ul class="messages" role="status">
+        {% for message in messages %}
+        <li class="message message--{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
     {% endif %}
 
     <main class="container page-content" id="main">
-        {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
     </main>
 
     <footer class="site-footer">
-        <div class="container">
-            <p>&copy; {% now "Y" %} Community Cooking Rota &mdash; meals organised by the people who turn up.</p>
-        </div>
+      <div class="container">
+        <p>
+          &copy; {% now "Y" %} Community Cooking Rota &mdash; meals organised by
+          the people who turn up.
+        </p>
+      </div>
     </footer>
 
     {% block extra_js %}{% endblock %}
-</body>
+  </body>
 </html>
